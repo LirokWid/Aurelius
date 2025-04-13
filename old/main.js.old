@@ -1,0 +1,146 @@
+import * as THREE from 'three';
+
+function main() {
+
+            const canvas = document.querySelector('#three-canvas');
+            const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
+            renderer.autoClearColor = false;
+
+            const fov = 75;
+            const aspect = 2;  // the canvas default
+            const near = 0.1;
+            const far = 5;
+            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            camera.position.z = 2;
+
+            const scene = new THREE.Scene();
+            {
+
+                const color = 0xFFFFFF;
+                const intensity = 3;
+                const light = new THREE.DirectionalLight(color, intensity);
+                light.position.set(-1, 2, 4);
+                scene.add(light);
+
+            }
+
+
+            // Load background texture and set as scene background
+            const loader = new THREE.TextureLoader();
+            const backgroundTexture = loader.load('/img/library.jpeg');
+            backgroundTexture.colorSpace = THREE.SRGBColorSpace;
+            scene.background = backgroundTexture;
+
+            function resizeRendererToDisplaySize(renderer) {
+                const canvas = renderer.domElement;
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                const needResize = canvas.width !== width || canvas.height !== height;
+                if (needResize) {
+                    renderer.setSize(width, height, false);
+                }
+                return needResize;
+            }
+            ///* Candles *///
+
+            const candles = [];
+
+            canvas.addEventListener('click', (event)=>
+            {
+                const mouse = new THREE.Vector2(
+                    (event.clientX / canvas.clientWidth) * 2 -1,
+                    -(event.clientY / canvas.clientHeight) * 2 -1); //Normalize mouse coords
+
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, camera)
+
+                const clickPoint = raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(2));
+                console.log('cliked at : ', clickPoint);
+
+                const glowColor = 0xffaa33;
+                const light = new THREE.PointLight(glowColor, 2, 3);
+                light.position.copy(clickPoint);
+                scene.add(light);
+
+                const sphereGeometry = new THREE.SphereGeometry(0.03, 16, 16);
+                const glowMaterial = new THREE.MeshBasicMaterial({ color: glowColor });
+                const glow = new THREE.Mesh(sphereGeometry, glowMaterial);
+                glow.position.copy(clickPoint);
+                scene.add(glow);
+
+                candles.push({ light, glow });
+            })
+
+
+            /*
+                //Book to select chapter to read (to change)
+                const bookGeometry = new THREE.BoxGeometry(0.5, 3, 0.2);
+                const bookMaterial = new THREE.MeshStandardMaterial({color: 'brown'});
+
+                const books = [];
+                for (let i = 0; i < 5; i++) {
+                    const book = new THREE.Mesh(bookGeometry, bookMaterial);
+                    book.position.set(i * 0.6 - 1.5, 0, 0);
+                    scene.add(book);
+                    books.push({ mesh: book, url: `rules${i + 1}.html` });
+                }
+
+                // Add light sources (candles)
+                const candleLight = new THREE.PointLight(0xffaa55, 5, 10); // Light source for candles
+                candleLight.position.set(1, 1, 3);
+                scene.add(candleLight);
+
+                // Light helper (for debugging)
+                const lightHelper = new THREE.PointLightHelper(candleLight);
+                scene.add(lightHelper);
+
+                // Optional: Ambient light to simulate global lighting (faint)
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+                scene.add(ambientLight);
+
+                // Resize handling for responsive design
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            */
+
+            // Animation loop
+            function render(time) {
+                time *= 0.001;  // convert to seconds
+
+                if (resizeRendererToDisplaySize(renderer)) {
+                    const canvas = renderer.domElement;
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
+
+                // Set the repeat and offset properties of the background texture
+                // to keep the image's aspect correct.
+                // Note the image may not have loaded yet.
+                const canvasAspect = canvas.clientWidth / canvas.clientHeight;
+                const imageAspect = backgroundTexture.image ? backgroundTexture.image.width / backgroundTexture.image.height : 1;
+                const aspect = imageAspect / canvasAspect;
+
+                backgroundTexture.offset.x = aspect > 1 ? (1 - 1 / aspect) / 2 : 0;
+                backgroundTexture.repeat.x = aspect > 1 ? 1 / aspect : 1;
+
+                backgroundTexture.offset.y = aspect > 1 ? 0 : (1 - aspect) / 2;
+                backgroundTexture.repeat.y = aspect > 1 ? 1 : aspect;
+
+                renderer.render(scene, camera);
+
+                // flicker of the candles
+                candles.forEach(({ light }) => {
+                    light.intensity = 1.8 + Math.sin(time * 20 + light.position.x * 10) * 0.3;
+                });
+
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+}
+
+main();
+
