@@ -68,7 +68,6 @@ class Scene
             candle.draw(this.canvas_manager.getContext(), time);
         });
 
-        // Continue the animation loop.
         requestAnimationFrame((t) => this.animate(t));
     }
 }
