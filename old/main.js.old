@@ -33,11 +33,11 @@ function main() {
 
             function resizeRendererToDisplaySize(renderer) {
                 const canvas = renderer.domElement;
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                const needResize = canvas.width !== width || canvas.height !== height;
+                const draw_width = canvas.clientWidth;
+                const draw_height = canvas.clientHeight;
+                const needResize = canvas.draw_width !== draw_width || canvas.draw_height !== draw_height;
                 if (needResize) {
-                    renderer.setSize(width, height, false);
+                    renderer.setSize(draw_width, draw_height, false);
                 }
                 return needResize;
             }
@@ -120,7 +120,7 @@ function main() {
                 // to keep the image's aspect correct.
                 // Note the image may not have loaded yet.
                 const canvasAspect = canvas.clientWidth / canvas.clientHeight;
-                const imageAspect = backgroundTexture.image ? backgroundTexture.image.width / backgroundTexture.image.height : 1;
+                const imageAspect = backgroundTexture.image ? backgroundTexture.image.draw_width / backgroundTexture.image.draw_height : 1;
                 const aspect = imageAspect / canvasAspect;
 
                 backgroundTexture.offset.x = aspect > 1 ? (1 - 1 / aspect) / 2 : 0;

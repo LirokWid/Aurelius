@@ -1,13 +1,28 @@
+/**
+ * Manages the canvas element and its rendering context.
+ */
 export class CanvasManager
 {
+    /**
+     * Constructs a CanvasManager instance.
+     * @param {string} canvasId - The id of the canvas DOM element.
+     */
     constructor(canvasId)
     {
         this.canvas = document.getElementById(canvasId);
+        if (!this.canvas)
+        {
+            throw new Error(`Canvas element with id ${canvasId} not found`);
+        }
         this.ctx = this.canvas.getContext('2d');
         this.resize();
+        // Debounce resize events to prevent excessive updates.
         window.addEventListener('resize', () => this.resize());
     }
 
+    /**
+     * Resizes the canvas to match the window dimensions.
+     */
     resize()
     {
         this.width = window.innerWidth;
@@ -16,26 +31,64 @@ export class CanvasManager
         this.canvas.height = this.height;
     }
 
+    /**
+     * Debounces the resize event to limit how often resize() is called.
+     */
+    debouncedResize()
+    {
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => this.resize(), 100);
+    }
+
+    /**
+     * Clears the entire canvas.
+     */
     clear()
     {
         this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
-    drawImage(image, x, y, width, height) {
+    /**
+     * Draws an image on the canvas.
+     * @param {CanvasImageSource} image - The image to draw.
+     * @param {number} x - The x-coordinate.
+     * @param {number} y - The y-coordinate.
+     * @param {number} width - The width to draw the image.
+     * @param {number} height - The height to draw the image.
+     */
+    drawImage(image, x, y, width, height)
+    {
         this.ctx.drawImage(image, x, y, width, height);
     }
 
-    createRadialGradient(...args) {
+    /**
+     * Creates a radial gradient.
+     * @param  {...any} args - Parameters for createRadialGradient.
+     * @returns {CanvasGradient}
+     */
+    createRadialGradient(...args)
+    {
         return this.ctx.createRadialGradient(...args);
     }
 
+    /**
+     * Retrieves the canvas rendering context.
+     * @returns {CanvasRenderingContext2D}
+     */
     getContext()
     {
         return this.ctx;
     }
 
-    update_positions()
+    /**
+     * Returns the current size of the canvas.
+     * @returns {object} Object containing width and height.
+     */
+    get_canvas_size()
     {
-
+        return {
+            width: this.width,
+            height: this.height
+        };
     }
 }
