@@ -1,4 +1,15 @@
-export class Glow {
+/**
+ * Represents the glow effect of a candle.
+ */
+export class Glow
+{
+    /**
+     * Constructs a Glow instance.
+     * @param {number} x - The x-coordinate for the glow.
+     * @param {number} y - The y-coordinate for the glow.
+     * @param {number} intensity - The intensity value of the glow.
+     * @param {number} size - The base size of the glow.
+     */
     constructor(x, y, intensity, size)
     {
         this.x = x;
@@ -8,31 +19,22 @@ export class Glow {
         this.timeOffset = Math.random() * 100;
     }
 
-    // If resizing window, glow effect position updates here
+    /**
+     * Updates the position of the glow.
+     * @param {number} x - The new x-coordinate.
+     * @param {number} y - The new y-coordinate.
+     */
     updatePosition(x, y)
     {
         this.x = x;
         this.y = y;
     }
 
-    updateCandlePositions()
-    {
-        const mapped_w = 0;
-
-        const w = this.canvasManager.width;
-        const h = this.canvasManager.height;
-
-        const newPositions = [
-            { x: w * 0.3, y: h * 0.75 },
-            { x: w * 0.5, y: h * 0.78 },
-            { x: w * 0.7, y: h * 0.74 }
-        ];
-
-        newPositions.forEach((pos, i) => {
-            this.candles[i].updatePosition(pos.x, pos.y);
-        });
-    }
-
+    /**
+     * Draws the glow effect.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     * @param {number} time - Time value used for animating the glow (flickering).
+     */
     draw(ctx, time)
     {
         const now = time * 0.002;
