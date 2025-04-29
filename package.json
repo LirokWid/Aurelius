@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "gsap": "^3.12.7",
     "pixi.js": "^8.9.1",
     "three": "^0.175.0"
   },

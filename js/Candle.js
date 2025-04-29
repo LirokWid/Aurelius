@@ -11,8 +11,9 @@ export class Candle
      * @param {number} init_y - The original y-coordinate on the background image.
      * @param {number} intensity - The intensity of the candle's glow.
      * @param {number} size - The base size of the candle's glow.
+     * @param background
      */
-    constructor(init_x, init_y, intensity, size)
+    constructor(init_x, init_y, intensity, size, background = null)
     {
         this.init_x = init_x;
         this.init_y = init_y;
@@ -20,6 +21,8 @@ export class Candle
         this.y = init_y;
 
         this.glow = new Glow(this.x, this.y, intensity, size);
+
+        this.map_to_background(background); // Map the initial position to the background
     }
 
     /**

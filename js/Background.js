@@ -14,6 +14,8 @@ export class Background
         this.image = new Image();
         this.image.src = src;
 
+        this.offset = 100; // Offset for the Y position of the background image
+
         // Set default placeholder dimensions in case the image is not immediately available.
         this.base_width = 1;
         this.base_height = 1;
@@ -38,21 +40,14 @@ export class Background
     update_size()
     {
         const dimensions = this.background_dim_to_scene_dim(this.canvas.width, this.canvas.height);
+        console.log(dimensions);
         this.draw_width = dimensions.draw_width;
         this.draw_height = dimensions.draw_height;
         this.x = dimensions.x;
         this.y = dimensions.y;
     }
 
-    /**
-     * Draws the background image on the provided canvas rendering context.
-     * @param {CanvasRenderingContext2D} ctx - The drawing context.
-     */
-    draw(ctx)
-    {
-        if (!this.image.complete) return;
-        ctx.drawImage(this.image, this.x, this.y, this.draw_width, this.draw_height);
-    }
+
 
     /**
      * Converts canvas dimensions to appropriate background drawing dimensions while
@@ -67,6 +62,8 @@ export class Background
         const img_aspect = this.base_width / this.base_height;
         const canvas_aspect = canvas_width / canvas_height;
 
+        const offset = this.offset || 0; // par défaut 0
+
         let draw_width, draw_height;
 
         if (canvas_aspect > img_aspect)
@@ -77,12 +74,38 @@ export class Background
             draw_height = canvas_height;
             draw_width = canvas_height * img_aspect;
         }
+        draw_height += offset;
+        draw_width = draw_height * img_aspect;
 
+        const zoom = draw_width / this.base_width;
+        console.log("zoom", zoom);
         return {
             x: (canvas_width - draw_width) / 2,
-            y: (canvas_height - draw_height) / 2,
+            //y: (canvas_height - draw_height) / 2,
+            y: canvas_height - draw_height,
             draw_width: draw_width,
-            draw_height: draw_height
+            draw_height: draw_height,
+            zoom: zoom,
+            img_aspect: img_aspect,
+            canvas_aspect: canvas_aspect
         };
+    }
+
+    /**
+     * Draws the background image with optional zoom.
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} zoom - Scaling factor (1 = original size)
+     */
+    draw(ctx, zoom = 1)
+    {
+        if (!this.image.complete) return;
+
+        const scaledWidth = this.draw_width * zoom;
+        const scaledHeight = this.draw_height * zoom;
+        const offsetX = this.x - (scaledWidth - this.draw_width) / 2;
+        const offsetY = this.y - (scaledHeight - this.draw_height) / 2;
+
+        //console.log(this.x, this.y, offsetX, offsetY);
+        ctx.drawImage(this.image, offsetX, offsetY, scaledWidth, scaledHeight);
     }
 }
