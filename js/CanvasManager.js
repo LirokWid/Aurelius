@@ -5,19 +5,19 @@ export class CanvasManager
 {
     /**
      * Constructs a CanvasManager instance.
-     * @param {string} canvasId - The id of the canvas DOM element.
+     * @param {string} canvas_id - The id of the canvas DOM element.
      */
-    constructor(canvasId)
+    constructor(canvas_id)
     {
-        this.canvas = document.getElementById(canvasId);
+        this.canvas = document.getElementById(canvas_id);
         if (!this.canvas)
         {
-            throw new Error(`Canvas element with id ${canvasId} not found`);
+            throw new Error(`Canvas element with id ${canvas_id} not found`);
         }
         this.ctx = this.canvas.getContext('2d');
         this.resize();
         // Debounce resize events to prevent excessive updates.
-        window.addEventListener('resize', () => this.resize());
+        //window.addEventListener('resize', () => this.resize());
     }
 
     /**
@@ -56,7 +56,7 @@ export class CanvasManager
      * @param {number} width - The width to draw the image.
      * @param {number} height - The height to draw the image.
      */
-    drawImage(image, x, y, width, height)
+    draw_image(image, x, y, width, height)
     {
         this.ctx.drawImage(image, x, y, width, height);
     }
