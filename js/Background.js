@@ -14,6 +14,8 @@ export class Background
         this.image = new Image();
         this.image.src = src;
 
+        this.alpha = 1; // Default alpha (fully visible)
+
         this.offset = 100; // Offset for the Y position of the background image
 
         // Set default placeholder dimensions in case the image is not immediately available.
@@ -23,6 +25,9 @@ export class Background
         this.y = 0;
         this.draw_width = canvas_manager.width;
         this.draw_height = canvas_manager.height;
+        this.zoom = 1;
+        this.img_aspect = 1;
+        this.canvas_aspect = 1;
 
         // When the image loads, update the base dimensions and recalculate drawing size.
         this.image.onload = () =>
@@ -45,6 +50,9 @@ export class Background
         this.draw_height = dimensions.draw_height;
         this.x = dimensions.x;
         this.y = dimensions.y;
+        this.zoom = dimensions.zoom;
+        this.img_aspect = dimensions.img_aspect;
+        this.canvas_aspect = dimensions.canvas_aspect;
     }
 
 
@@ -95,17 +103,29 @@ export class Background
      * Draws the background image with optional zoom.
      * @param {CanvasRenderingContext2D} ctx
      * @param {number} zoom - Scaling factor (1 = original size)
+     * @param alpha
      */
-    draw(ctx, zoom = 1)
+    draw(ctx, zoom = 1, alpha = null)
     {
-        if (!this.image.complete) return;
+        //if (!this.image.complete) return;
 
-        const scaledWidth = this.draw_width * zoom;
-        const scaledHeight = this.draw_height * zoom;
+        this.zoom = zoom;
+
+        const scaledWidth = this.draw_width * this.zoom;
+        const scaledHeight = this.draw_height * this.zoom;
         const offsetX = this.x - (scaledWidth - this.draw_width) / 2;
         const offsetY = this.y - (scaledHeight - this.draw_height) / 2;
 
+        ctx.save(); // Always good practice when changing globalAlpha
+        ctx.globalAlpha = alpha !== null ? alpha : this.alpha;
         //console.log(this.x, this.y, offsetX, offsetY);
-        ctx.drawImage(this.image, offsetX, offsetY, scaledWidth, scaledHeight);
+        ctx.drawImage(
+            this.image,
+            offsetX,
+            offsetY,
+            scaledWidth,
+            scaledHeight);
+        ctx.restore(); // Restore canvas state
+
     }
 }
