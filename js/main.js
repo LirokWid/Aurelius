@@ -62,31 +62,16 @@ class Scene
 
         this.background.alpha = 0; // Force starting alpha to 0
 
-        startFade.call(this);
+        start_fade.call(this).then(() => {
+            requestAnimationFrame((time) => this.animate(time));
 
-
+        });
 
         // Debug click position
         this.canvas_manager.canvas.addEventListener('click', (e) => {
             SysHelper.debugClickPosition(e, this.background, this.canvas_manager.canvas);
         });
-
-
-        requestAnimationFrame((time) => this.animate(time));
     }
-
-    async startFade() {
-    await new Promise((resolve) => {
-        gsap.to(this.background, {
-            duration: 1,
-            alpha: 1,
-            onUpdate: () => this.update_size_and_positions(),
-            onComplete: resolve
-        });
-    });
-
-    console.log('Animation complete!');
-}
 
 
     /**
@@ -129,5 +114,24 @@ class Scene
     }
 }
 
+/**
+ * Starts the fade-in animation for the background.
+ * @returns {Promise<void>}
+ */
+async function start_fade()
+{
+    await new Promise((resolve) =>
+    {
+        this.background.alpha = 0;
+        gsap.to(this.background,
+            {
+                duration: 10,
+                alpha: 0.5,
+                onUpdate: () => this.background.draw(this.canvas_manager.getContext()),
+                onComplete: resolve
+            });
+    });
+    console.log('Animation complete!');
+}
 // Initialize and start the scene.
 new Scene();
