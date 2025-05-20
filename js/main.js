@@ -12,9 +12,9 @@ import {SysHelper} from "./SysHelper";
 class Scene
 {
     constructor() {
-        const canvas_id = 'main-canvas';
-        const background_src = '/img/library.jpeg';
-        const book_src = '/img/book.png'
+        const canvas_id =  'main-canvas';
+        const background_src = import.meta.env.BASE_URL +'/img/library.jpeg';
+        const book_src = import.meta.env.BASE_URL +'/img/book.png'
 
         this.scene_zoom = 1.0;
 
