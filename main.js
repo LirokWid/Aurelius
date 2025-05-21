@@ -1,10 +1,10 @@
 // main.js
-import {CanvasManager} from "./CanvasManager";
-import {Background} from "./Background";
-import {Candle} from "./Candle";
-import {Book} from "./Book";
+import {CanvasManager} from "./src/components/CanvasManager";
+import {Background} from "./src/components/Background";
+import {Candle} from "./src/components/Candle";
+import {Book} from "./src/components/Book";
 import gsap from "gsap";
-import {SysHelper} from "./SysHelper";
+import {SysHelper} from "./src/components/SysHelper";
 
 /**
  * Manages the overall scene, including the background and candles.
@@ -13,8 +13,8 @@ class Scene
 {
     constructor() {
         const canvas_id =  'main-canvas';
-        const background_src = import.meta.env.BASE_URL +'/img/library.jpeg';
-        const book_src = import.meta.env.BASE_URL +'/img/book.png'
+        const background_src = import.meta.env.BASE_URL +'/assets/library.jpeg';
+        const book_src = import.meta.env.BASE_URL +'/assets/book.png'
 
         this.scene_zoom = 1.0;
 
@@ -99,8 +99,7 @@ class Scene
         //this.canvas_manager.clear();
         const ctx = this.canvas_manager.getContext();
 
-        this.background.draw(ctx);
-
+        this.background.draw(ctx, 1,1);
         this.book.draw();
 
         // Draw glowing candles
@@ -120,18 +119,25 @@ class Scene
  */
 async function start_fade()
 {
+    this.background.alpha = 0;
+    this.background.zoom = 0.9;
+
     await new Promise((resolve) =>
     {
-        this.background.alpha = 0;
         gsap.to(this.background,
             {
-                duration: 10,
-                alpha: 0.5,
-                onUpdate: () => this.background.draw(this.canvas_manager.getContext()),
+                duration: 1,
+                alpha: 1,
+                zoom: 1,
+                onUpdate: () =>
+                {
+                    this.background.draw(this.canvas_manager.getContext(), this.background.zoom, this.background.alpha)
+                    //console.log('Fade-in!')
+                },
                 onComplete: resolve
             });
     });
-    console.log('Animation complete!');
+    console.log('Background fade in complete!');
 }
 // Initialize and start the scene.
 new Scene();

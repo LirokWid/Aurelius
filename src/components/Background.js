@@ -45,7 +45,7 @@ export class Background
     update_size()
     {
         const dimensions = this.background_dim_to_scene_dim(this.canvas.width, this.canvas.height);
-        console.log(dimensions);
+        //console.log(dimensions);
         this.draw_width = dimensions.draw_width;
         this.draw_height = dimensions.draw_height;
         this.x = dimensions.x;

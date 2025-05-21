@@ -74,7 +74,8 @@ export class Book {
                 mouseY >= this.y &&
                 mouseY <= this.y + this.height
             ) {
-                window.location.href = '/gamerules';
+                const base = import.meta.env.BASE_URL;
+                window.location.href = `${base}gamerules/`;
             }
         });
     }

@@ -1,7 +1,17 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
-    base: '/Aurelius/', // 👈 use your repository name here
+    base: '/Aurelius/', // Github repository name
+    build: {
+        rollupOptions: {
+            input: {
+                main: resolve(__dirname, 'src/index.html'),
+                gamerules: resolve(__dirname, 'src/gamerules/index.html'),
+
+                // Add other entry points if needed
+            }
+        }
+    }
 });
 
-// This is a Vite configuration file that sets the base path for the project for github pages deployment.
