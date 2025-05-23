@@ -70,7 +70,7 @@ export class Book
             if (isInside)
             {
                 const base = import.meta.env.BASE_URL;
-                window.location.href = `${base}/gamerules/`;
+                window.location.href = `${base}gamerules/`;
             }
         });
     }
