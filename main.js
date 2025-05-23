@@ -36,12 +36,16 @@ class Scene
 
         this.book = new Book(book_src, this.canvas_manager, this.background,
             {
-                init_x: 600,
-                init_y: 890,
-                baseZoom: 0.6,
-                hoverZoom: 0.7,
-                levitationHeight: 12
+
+                init_x: 1470,
+                init_y: 1197,
+                zoomHoverFactor: 1.1, // 10% of base zoom
+                levitationHeight: 12, // sin animation height
+                baseZoom: 0.6,        // Base zoom level
+                hoverZoom: 0.7
             });
+
+        this.drawables = [this.book, ...this.candles];
 
         // Fade in animation parameters
         this.backgroundFadeAlpha = 0;
@@ -62,15 +66,48 @@ class Scene
 
         this.background.alpha = 0; // Force starting alpha to 0
 
-        start_fade.call(this).then(() => {
-            requestAnimationFrame((time) => this.animate(time));
+        this.background.image.onload = () => {
+            this.update_size_and_positions();
+            this.backgroundFadeAlpha = 1;
 
-        });
+            // Start background fade only after size is valid
+            this.background.alpha = 0;
+            start_background_fade.call(this).then(() =>
+            {
+                this.book.updateBaseZoom(this.background.zoom);
+                requestAnimationFrame((time) => this.animate(time));
+            });
+        };
 
         // Debug click position
         this.canvas_manager.canvas.addEventListener('click', (e) => {
             SysHelper.debugClickPosition(e, this.background, this.canvas_manager.canvas);
         });
+        this.canvas_manager.canvas.addEventListener('click', (e) => {
+            const canvas = this.canvas_manager.canvas;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const bg = this.background;
+
+            const scaledWidth = bg.draw_width * bg.zoom;
+            const scaledHeight = bg.draw_height * bg.zoom;
+
+            const drawX = bg.x - (scaledWidth - bg.draw_width) / 2;
+            const drawY = bg.y - (scaledHeight - bg.draw_height) / 2;
+
+            const scaleX = scaledWidth / bg.base_width;
+            const scaleY = scaledHeight / bg.base_height;
+
+            const imageX = (mouseX - drawX) / scaleX;
+            const imageY = (mouseY - drawY) / scaleY;
+
+            console.log("📌 Clicked position on background image:");
+            console.log("  imageX:", Math.round(imageX));
+            console.log("  imageY:", Math.round(imageY));
+        });
+
     }
 
 
@@ -80,13 +117,11 @@ class Scene
     update_size_and_positions()
     {
         this.canvas_manager.resize();
-        // Update background dimensions based on the current canvas size.
         this.background.update_size();
-        this.candles.forEach(candle =>
-        {// Update each candle's position according to the new background dimensions.
-            candle.map_to_background(this.background);
-        });
-        this.book.updatePosition();
+
+        this.candles.forEach(candle => candle.map_to_background(this.background));
+        this.book.update();
+        this.book.updateBaseZoom(this.background.zoom);
     }
 
     /**
@@ -95,19 +130,17 @@ class Scene
      */
     animate(time)
     {
-        // Clear the canvas.
-        //this.canvas_manager.clear();
         const ctx = this.canvas_manager.getContext();
+        //ctx.clearRect(0, 0, this.canvas_manager.width, this.canvas_manager.height);
 
-        this.background.draw(ctx, 1,1);
-        this.book.draw();
+        this.background.draw(ctx, 1, 1);
+        //this.book.draw();
 
-        // Draw glowing candles
-        this.candles.forEach(candle =>
+        this.drawables.forEach(drawable =>
         {
-            candle.draw(ctx, time);
+            //drawable.update?.(time);
+            drawable.draw?.(ctx, time);
         });
-        //}
 
         requestAnimationFrame((t) => this.animate(t));
     }
@@ -117,10 +150,10 @@ class Scene
  * Starts the fade-in animation for the background.
  * @returns {Promise<void>}
  */
-async function start_fade()
+async function start_background_fade()
 {
     this.background.alpha = 0;
-    this.background.zoom = 0.9;
+    this.background.zoom = 0.8;
 
     await new Promise((resolve) =>
     {
@@ -132,7 +165,9 @@ async function start_fade()
                 onUpdate: () =>
                 {
                     this.background.draw(this.canvas_manager.getContext(), this.background.zoom, this.background.alpha)
-                    //console.log('Fade-in!')
+
+                    //console.log("zooom", this.background.zoom);
+                    //console.log("alpha", this.background.alpha);
                 },
                 onComplete: resolve
             });

@@ -1,12 +1,13 @@
 import gsap from 'gsap';
 
-export class Book {
-    constructor(src, canvas_manager, background, options = {}) {
+export class Book
+{
+    constructor(src, canvas_manager, background, options = {})
+    {
         this.canvas = canvas_manager;
         this.ctx = canvas_manager.getContext();
         this.image = new Image();
         this.image.src = src;
-
         this.background = background;
 
         this.init_x = options.init_x || 1000;
@@ -16,22 +17,27 @@ export class Book {
 
         this.zoom = this.baseZoom;
         this.hovered = false;
+        this.levitationHeight = options.levitationHeight || 10;
 
         this.offsetY = 0; // GSAP-animated Y offset
         this.fadeAlpha = 0;
+        this.hovered = false;
 
         this.draw_width = 0;
         this.draw_height = 0;
 
+        this.baseX = 0;
+        this.baseY = 0;
         this.x = 0;
         this.y = 0;
         this.width = 0;
         this.height = 0;
 
-        this.image.onload = () => {
+        this.image.onload = () =>
+        {
             this.draw_width = this.image.width;
             this.draw_height = this.image.height;
-
+            this.updatePosition();
             this.fadeIn();
             this.startLevitation();
         };
@@ -40,44 +46,45 @@ export class Book {
     }
 
     initListeners() {
-        this.canvas.canvas.addEventListener('mousemove', (e) => {
-            const rect = this.canvas.canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        this.canvas.canvas.addEventListener('mousemove', (e) =>
+        {
+            const { isInside } = this.getMouseEventInsideBounds(e);
 
-            if (
-                mouseX >= this.x &&
-                mouseX <= this.x + this.width &&
-                mouseY >= this.y &&
-                mouseY <= this.y + this.height
-            ) {
-                if (!this.hovered) {
-                    this.hovered = true;
-                    gsap.to(this, { zoom: this.hoverZoom, duration: 0.3, ease: "power2.out" });
-                    this.canvas.canvas.style.cursor = 'pointer';
-                }
-            } else if (this.hovered) {
+            if (isInside && !this.hovered)
+            {
+                this.hovered = true;
+                gsap.to(this, { zoom: this.hoverZoom, duration: 0.3, ease: "power2.out" });
+                this.canvas.canvas.style.cursor = 'pointer';
+            } else if (!isInside && this.hovered)
+            {
                 this.hovered = false;
                 gsap.to(this, { zoom: this.baseZoom, duration: 0.3, ease: "power2.out" });
                 this.canvas.canvas.style.cursor = 'default';
             }
         });
 
-        this.canvas.canvas.addEventListener('click', (e) => {
-            const rect = this.canvas.canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        this.canvas.canvas.addEventListener('click', (e) =>
+        {
+            const { isInside } = this.getMouseEventInsideBounds(e);
 
-            if (
-                mouseX >= this.x &&
-                mouseX <= this.x + this.width &&
-                mouseY >= this.y &&
-                mouseY <= this.y + this.height
-            ) {
+            if (isInside)
+            {
                 const base = import.meta.env.BASE_URL;
-                window.location.href = `${base}gamerules/`;
+                window.location.href = `${base}/gamerules/`;
             }
         });
+    }
+
+    getMouseEventInsideBounds(e) {
+        const rect = this.canvas.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const isInside =
+            mouseX >= this.x && mouseX <= this.x + this.width &&
+            mouseY >= this.y && mouseY <= this.y + this.height;
+
+        return { isInside, mouseX, mouseY };
     }
 
     updatePosition() {
@@ -88,34 +95,19 @@ export class Book {
         this.baseY = this.background.y + this.init_y * scaleY;
     }
 
-    startLevitation() {
-        gsap.to(this, {
-            offsetY: -10,
-            duration: 1.5,
-            yoyo: true,
-            repeat: -1,
-            ease: "sine.inOut"
-        });
+    update()
+    {
+        this.updatePosition();
     }
-
-    fadeIn() {
-        gsap.to(this, {
-            fadeAlpha: 1,
-            duration: 1.5,
-            ease: "power2.out"
-        });
-    }
-
     draw() {
         if (!this.image.complete) return;
-
-        this.updatePosition();
 
         const scaledWidth = this.draw_width * this.zoom;
         const scaledHeight = this.draw_height * this.zoom;
 
-        const offsetX = this.baseX - (scaledWidth - this.draw_width) / 2;
-        const offsetY = this.baseY - (scaledHeight - this.draw_height) / 2 + this.offsetY;
+        // CENTER the image at baseX/baseY
+        const offsetX = this.baseX - scaledWidth / 2;
+        const offsetY = this.baseY - scaledHeight / 2 + this.offsetY;
 
         this.x = offsetX;
         this.y = offsetY;
@@ -126,5 +118,33 @@ export class Book {
         this.ctx.globalAlpha = this.fadeAlpha;
         this.ctx.drawImage(this.image, offsetX, offsetY, scaledWidth, scaledHeight);
         this.ctx.restore();
+    }
+
+    startLevitation()
+    {
+        gsap.to(this,
+            {
+            offsetY: -this.levitationHeight,
+            duration: 1.5,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut"
+        });
+    }
+
+    fadeIn()
+    {
+        gsap.to(this,
+            {
+            fadeAlpha: 1,
+            duration: 1.5,
+            ease: "power2.out"
+        });
+    }
+
+
+    updateBaseZoom(zoom)
+    {
+        this.baseZoom = zoom;
     }
 }

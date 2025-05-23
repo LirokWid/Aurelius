@@ -37,9 +37,15 @@ export class Glow
      */
     draw(ctx, time)
     {
+        if (!isFinite(this.x) || !isFinite(this.y)) return;
+
         const now = time * 0.002;
         const flicker = 1 + Math.sin(now * 5 + this.timeOffset) * 0.2;
         const radius = this.baseSize * flicker;
+
+        if (!isFinite(radius)) return;
+
+
         const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius);
         gradient.addColorStop(0, 'rgba(255, 170, 51, 0.9)');
         gradient.addColorStop(1, 'rgba(255, 170, 51, 0)');

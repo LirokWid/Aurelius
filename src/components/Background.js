@@ -30,13 +30,13 @@ export class Background
         this.canvas_aspect = 1;
 
         // When the image loads, update the base dimensions and recalculate drawing size.
-        this.image.onload = () =>
+        this.image.addEventListener('load', () =>
         {
             this.base_width = this.image.width;
             this.base_height = this.image.height;
             this.update_size();
-            // Optionally, you could trigger an event here to notify other components.
-        };
+        });
+
     }
 
     /**
@@ -54,8 +54,6 @@ export class Background
         this.img_aspect = dimensions.img_aspect;
         this.canvas_aspect = dimensions.canvas_aspect;
     }
-
-
 
     /**
      * Converts canvas dimensions to appropriate background drawing dimensions while
@@ -86,7 +84,7 @@ export class Background
         draw_width = draw_height * img_aspect;
 
         const zoom = draw_width / this.base_width;
-        console.log("zoom", zoom);
+        //console.log("Bckgrnd_zoom", zoom, "aspect", img_aspect, "canvas_aspect", canvas_aspect);
         return {
             x: (canvas_width - draw_width) / 2,
             //y: (canvas_height - draw_height) / 2,
@@ -107,9 +105,10 @@ export class Background
      */
     draw(ctx, zoom = 1, alpha = null)
     {
-        //if (!this.image.complete) return;
+        if (!this.image.complete) return;
 
         this.zoom = zoom;
+        this.alpha = alpha;
 
         const scaledWidth = this.draw_width * this.zoom;
         const scaledHeight = this.draw_height * this.zoom;
