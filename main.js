@@ -39,10 +39,10 @@ class Scene
 
                 init_x: 1470,
                 init_y: 1197,
-                zoomHoverFactor: 1.1, // 10% of base zoom
+                zoomHoverFactor: 1.2, // éà% of base zoom
                 levitationHeight: 12, // sin animation height
-                baseZoom: 0.6,        // Base zoom level
-                hoverZoom: 0.7
+                baseZoom: 1.1,        // Base zoom level
+                hoverZoom: 1.2
             });
 
         this.drawables = [this.book, ...this.candles];
@@ -72,17 +72,24 @@ class Scene
 
             // Start background fade only after size is valid
             this.background.alpha = 0;
+
+            //
             start_background_fade.call(this).then(() =>
             {
-                this.book.updateBaseZoom(this.background.zoom);
-                requestAnimationFrame((time) => this.animate(time));
+                this.update_size_and_positions();
+                this.book.updateZoomFromBackground();
+                start_book_fade.call(this).then(() => {
+                    requestAnimationFrame((time) => this.animate(time));
+                });
             });
         };
 
-        // Debug click position
+        // TODO remove Debug click position
         this.canvas_manager.canvas.addEventListener('click', (e) => {
             SysHelper.debugClickPosition(e, this.background, this.canvas_manager.canvas);
         });
+
+        // TODO : remove this debug click position
         this.canvas_manager.canvas.addEventListener('click', (e) => {
             const canvas = this.canvas_manager.canvas;
             const rect = canvas.getBoundingClientRect();
@@ -118,10 +125,11 @@ class Scene
     {
         this.canvas_manager.resize();
         this.background.update_size();
+        this.book.updateZoomFromBackground();
 
         this.candles.forEach(candle => candle.map_to_background(this.background));
         this.book.update();
-        this.book.updateBaseZoom(this.background.zoom);
+        //this.book.updateBaseZoom(this.background.zoom);
     }
 
     /**
@@ -131,18 +139,19 @@ class Scene
     animate(time)
     {
         const ctx = this.canvas_manager.getContext();
-        //ctx.clearRect(0, 0, this.canvas_manager.width, this.canvas_manager.height);
+        this.drawScene(ctx, time);
+        requestAnimationFrame((t) => this.animate(t));
+    }
 
+    drawScene(ctx, time = performance.now())
+    {
+        ctx.clearRect(0, 0, this.canvas_manager.width, this.canvas_manager.height);
         this.background.draw(ctx, 1, 1);
-        //this.book.draw();
 
         this.drawables.forEach(drawable =>
         {
-            //drawable.update?.(time);
             drawable.draw?.(ctx, time);
         });
-
-        requestAnimationFrame((t) => this.animate(t));
     }
 }
 
@@ -174,5 +183,41 @@ async function start_background_fade()
     });
     console.log('Background fade in complete!');
 }
+
+async function start_book_fade()
+{
+    this.book.fadeAlpha = 0;
+    this.book.zoom = this.book.baseZoom;
+
+    await new Promise((resolve) => {
+        const tl = gsap.timeline({
+            onComplete: resolve
+        });
+
+        tl.to(this.book, {
+            duration: 1,
+            fadeAlpha: 1,
+            zoom: this.book.hoverZoom,
+            ease: 'power2.out',
+            onUpdate: () =>
+            {
+                this.drawScene(this.canvas_manager.getContext(), performance.now());
+            }
+        });
+
+        tl.to(this.book, {
+            duration: 0.8,
+            zoom: this.book.baseZoom,
+            ease: 'power2.inOut',
+            onUpdate: () => {
+                this.drawScene(this.canvas_manager.getContext(), performance.now());
+            }
+        });
+    });
+
+    console.log('Book fade in complete!');
+    this.book.startLevitation();
+}
+
 // Initialize and start the scene.
 new Scene();

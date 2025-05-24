@@ -12,10 +12,14 @@ export class Book
 
         this.init_x = options.init_x || 1000;
         this.init_y = options.init_y || 500;
-        this.baseZoom = options.baseZoom || 1.1;
-        this.hoverZoom = options.hoverZoom || 1.25;
 
+        this.baseZoomRatio = options.baseZoom;
+        this.hoverZoomRatio = options.hoverZoom;
+
+        this.baseZoom = this.background.zoom * this.baseZoomRatio;
+        this.hoverZoom = this.background.zoom * this.hoverZoomRatio;
         this.zoom = this.baseZoom;
+
         this.hovered = false;
         this.levitationHeight = options.levitationHeight || 10;
 
@@ -38,11 +42,21 @@ export class Book
             this.draw_width = this.image.width;
             this.draw_height = this.image.height;
             this.updatePosition();
-            this.fadeIn();
-            this.startLevitation();
         };
 
         this.initListeners();
+    }
+
+    updateZoomFromBackground()
+    {
+        this.baseZoom = this.background.zoom * this.baseZoomRatio;
+        this.hoverZoom = this.background.zoom * this.hoverZoomRatio;
+
+        // Reset zoom if not hovered
+        if (!this.hovered)
+        {
+            this.zoom = this.baseZoom;
+        }
     }
 
     initListeners() {
@@ -99,7 +113,8 @@ export class Book
     {
         this.updatePosition();
     }
-    draw() {
+    draw(alpha = 1)
+    {
         if (!this.image.complete) return;
 
         const scaledWidth = this.draw_width * this.zoom;
@@ -115,7 +130,7 @@ export class Book
         this.height = scaledHeight;
 
         this.ctx.save();
-        this.ctx.globalAlpha = this.fadeAlpha;
+        this.ctx.globalAlpha = alpha;
         this.ctx.drawImage(this.image, offsetX, offsetY, scaledWidth, scaledHeight);
         this.ctx.restore();
     }
@@ -131,17 +146,6 @@ export class Book
             ease: "sine.inOut"
         });
     }
-
-    fadeIn()
-    {
-        gsap.to(this,
-            {
-            fadeAlpha: 1,
-            duration: 1.5,
-            ease: "power2.out"
-        });
-    }
-
 
     updateBaseZoom(zoom)
     {
