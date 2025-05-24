@@ -13,8 +13,8 @@ class Scene
 {
     constructor() {
         const canvas_id =  'main-canvas';
-        const background_src = import.meta.env.BASE_URL +'/assets/library.jpeg';
-        const book_src = import.meta.env.BASE_URL +'/assets/book.png'
+        const background_src = import.meta.env.BASE_URL +'assets/library.jpeg';
+        const book_src = import.meta.env.BASE_URL +'assets/book.png'
 
         this.scene_zoom = 1.0;
 

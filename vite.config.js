@@ -2,7 +2,9 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-    base: '/Aurelius/', // Github repository name
+    //base: '/Aurelius/', // Github repository name
+    base: '/', // Github repository name
+
     build: {
         rollupOptions: {
             input: {
