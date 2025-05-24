@@ -10,6 +10,8 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, 'index.html'),
                 gamerules: resolve(__dirname, 'gamerules/index.html'),
+                chronicon: resolve(__dirname, 'chronicon.html'),
+
 
                 // Add other entry points if needed
             }
