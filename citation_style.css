@@ -1,0 +1,30 @@
+body {
+    background-color: #EDE0C8;
+    color: #1C1C1C;
+    font-family: 'Georgia', serif;
+    padding: 20px;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #EDE0C8;
+    border: 2px solid #C2A24E;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+h1 {
+    color: #2E6B4F;
+    text-align: center;
+}
+.citation {
+    font-style: italic;
+    border-left: 4px solid #8B0000;
+    padding-left: 10px;
+    margin-top: 20px;
+    color: #1C1C1C;
+}
+.traduction {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #2E6B4F;
+}

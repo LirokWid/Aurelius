@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Cormorant+Garamond:wght@600&family=EB+Garamond&display=swap');
+
+body {
+    background-color: #EDE0C8;
+    color: #1C1C1C;
+    font-family: 'EB Garamond', serif;
+    padding: 2rem;
+}
+
+.manuscript {
+    background-image: url('img/fon_parchein_vieilli.png') /*repeat*/;
+    background-size: cover;
+    background-position: left top;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #C2A24E;
+    /*border-radius: 1rem;*/
+    display: flex;
+    /*max-width:100%;*/
+    height: 100vh; /* occuper toute la hauteur de l'écran */
+    width: 100vw;
+    /*box-shadow: 0 0 20px #2E6B4F80;*/
+
+}
+
+.main-title {
+    font-family: 'Goudy Old Style', 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    color: #2E6B4F;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+    font-style: italic;
+    color: #8B0000;
+    margin-bottom: 2rem;
+}
+
+.aurelius {
+    font-family: 'Cinzel', serif;
+    color: #C2A24E;
+}
+
+.fragment {
+    margin-bottom: 2.5rem;
+    padding: 1rem;
+    border-left: 4px solid #2E6B4F;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.fragment-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    color: #8B0000;
+    margin-bottom: 0.8rem;
+}
+
+.latin {
+    font-style: italic;
+    color: #1C1C1C;
+    margin-bottom: 0.5rem;
+}
+
+.translation {
+    color: #2E6B4F;
+    font-style: normal;
+    background: rgba(194, 162, 78, 0.15);
+    padding: 0.8rem;
+    border-left: 3px solid #C2A24E;
+    margin-top: 0.5rem;
+}
+
+.hermes {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #8B0000;
+    margin-top: 1rem;
+    border-left: 5px solid #C2A24E;
+    padding-left: 1rem;
+    background-color: rgba(206, 177, 109, 0.1);
+}
+
+.warning {
+    background-color: rgba(139, 0, 0, 0.05);
+    border-left: 4px solid #8B0000;
+}
