@@ -1,4 +1,5 @@
-*, *:before, *:after {
+*, *:before, *:after
+{
     margin: 0;
     padding: 0;
     font-family: 'Goudy Old Style', serif;
@@ -8,49 +9,55 @@
 }
 
 
-html, body {
+html, body
+{
     height: 100%;
     background-color: #000;
     overflow: hidden;
     position: relative;
+
 }
 
 #title-container
 {
+    word-break: normal;
+    overflow-wrap: break-word;
+    white-space: normal;
     position: absolute;
-    top: 20%;
+    top: 15%;
     left: 50%;
+    width: 75%;
     transform: translate(-50%, -50%);
+    text-align: center;
+    color: orange;
 }
 
 #welcome-text
 {
-    text-align: center;
-    font-size: 3rem;
-    color: orange;
-    text-shadow:
-            0 0 10px orange,
-            0 0 20px red,
-            0 0 40px rgba(255, 100, 0, 0.7);
-    animation: flicker 5s infinite;
+    font-size: 5rem;
+    animation: flicker 10s infinite;
 }
 
-@keyframes flicker {
-    0% { opacity: 0.8; text-shadow: 0 0 10px orange; }
-    50% { opacity: 1; text-shadow: 0 0 20px red; }
-    100% { opacity: 0.9; text-shadow: 0 0 15px orange; }
-}
+
 
 #slang-text
 {
-    /* Should lit up when the cursor closes on the text like a torch */
-    text-align: center;
-
-    font-size: 1rem;
-    color: orange;
-    text-shadow:
-            0 0 10px orange,
-            0 0 20px red,
-            0 0 40px rgba(255, 100, 0, 0.7);
-    animation: flicker 3s infinite;
+    font-size: 2rem;
+    animation: flicker 8s infinite;
 }
+
+@keyframes flicker
+{
+    0%   { opacity: 0.85; text-shadow: 0 0 20px orange; }
+    5%   { opacity: 0.4; text-shadow: 0 0 10px darkorange; }
+    10%  { opacity: 0.95; text-shadow: 0 0 25px orangered; }
+    17%  { opacity: 0.6; text-shadow: 0 0 15px orange; }
+    25%  { opacity: 1; text-shadow: 0 0 30px red; }
+    38%  { opacity: 0.5; text-shadow: 0 0 12px darkorange; }
+    52%  { opacity: 0.9; text-shadow: 0 0 28px orange; }
+    66%  { opacity: 0.3; text-shadow: 0 0 8px sienna; }
+    78%  { opacity: 0.8; text-shadow: 0 0 20px red; }
+    87%  { opacity: 0.55; text-shadow: 0 0 12px orangered; }
+    100% { opacity: 0.9; text-shadow: 0 0 22px orange; }
+}
+

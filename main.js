@@ -7,7 +7,9 @@ import gsap from "gsap";
 import {SysHelper} from "./src/components/SysHelper";
 
 /**
- * Manages the overall scene, including the background and candles.
+ * Represents the main Scene of the application, handling background, candles, a book, and animations.
+ * The Scene manages its internal components and handles screen resizing, background updates,
+ * and rendering of all interactive elements.
  */
 class Scene
 {
