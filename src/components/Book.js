@@ -1,5 +1,13 @@
 import gsap from 'gsap';
 
+//let menu_path = "src/chronicon/chronicon.html"
+//let menu_path = "src/codex/codex hermetica.html"
+//let menu_path = "src/fragment/fragment aurelius 232.html"
+//let menu_path = "src/page1/index.html"; // Default path, can be changed later
+//let menu_path = "src/page2/index.html"; // Default path, can be changed later
+
+let menu_path = "src/gamerules/index.html"; // Default path, can be changed later
+
 export class Book
 {
     constructor(src, canvas_manager, background, options = {})
@@ -84,7 +92,7 @@ export class Book
             if (isInside)
             {
                 const base = import.meta.env.BASE_URL;
-                window.location.href = `${base}gamerules/`;
+                window.location.href = base + menu_path;
             }
         });
     }
