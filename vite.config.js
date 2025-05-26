@@ -1,21 +1,33 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { globSync } from 'glob';
+
+// Get all HTML files inside src/pages*/index.html
+const subPages = globSync('src/*/*.html',
+    {
+    absolute: true
+});
+
+// Add the root index.html manually
+const inputFiles = [resolve(__dirname, 'index.html'), ...subPages];
+
+// Map each input to a named entry
+const input = inputFiles.reduce((acc, file) =>
+{
+    const relativePath = file.replace(__dirname + '\\', '').replace(/\.html$/, '');
+
+    // Use the relative path (with slashes converted) as the key
+    const name = relativePath.replace(/\\/g, '/');
+    acc[name] = file;
+    return acc;
+}, {});
 
 export default defineConfig({
-    //base: '/Aurelius/', // Github repository name
-    base: '/', // Github repository name
+    base: '/', // Or '/Aurelius/' if for GitHub Pages
     appType: 'mpa',
     build: {
         rollupOptions: {
-            input: {
-                main: resolve(__dirname, 'index.html'),
-                gamerules: resolve(__dirname, 'gamerules/index.html'),
-                chronicon: resolve(__dirname, 'chronicon.html'),
-
-
-                // Add other entry points if needed
-            }
+            input
         }
     }
 });
-

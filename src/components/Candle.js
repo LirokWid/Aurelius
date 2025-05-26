@@ -1,7 +1,8 @@
 import {Glow} from "./Glow";
 
 /**
- * Represents a candle with a glow effect that remains fixed relative to the background.
+ * Represents a Candle with a glowing effect, which can be dynamically
+ * mapped to a background and drawn on a canvas.
  */
 export class Candle
 {
