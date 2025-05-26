@@ -1,9 +1,7 @@
 
-export class SysHelper
-{
+export class SysHelper {
     // If called add debug the clicked position to the console
-    static debugClickPosition(e, background, canvas)
-    {
+    static debugClickPosition(e, background, canvas) {
         const canvasRect = canvas.getBoundingClientRect();
         const clickX = e.clientX - canvasRect.left;
         const clickY = e.clientY - canvasRect.top;
@@ -16,5 +14,4 @@ export class SysHelper
 
         console.log(`bckgrnd x: ${Math.round(init_x)}, bckgrnd y: ${Math.round(init_y)}`);
     }
-
 }

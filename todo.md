@@ -7,3 +7,8 @@
 5. [ ] Global lighting animations
 6. [ ] Link other website pages to main page
 7. [ ] Welcome text animation
+
+Handle javascript deactivated browsers
+
+Link to GoatCounter for analytics:
+[GoatCounter](https://aurelius.goatcounter.com/)

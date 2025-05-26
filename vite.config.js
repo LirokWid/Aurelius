@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
     //base: '/Aurelius/', // Github repository name
     base: '/', // Github repository name
-
+    appType: 'mpa',
     build: {
         rollupOptions: {
             input: {
